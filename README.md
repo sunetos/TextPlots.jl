@@ -51,3 +51,6 @@ function is used for the label.
 
 Plots are scaled from min(f(x)) to max(f(x)) automatically; you cannot supply a
 range for the vertical axis.
+
+Most graph features are configurable; you can toggle the border, title, and axis
+labels.
