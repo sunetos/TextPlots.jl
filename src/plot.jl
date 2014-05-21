@@ -30,7 +30,7 @@ function funclabel(f, names=["x"])
 end
 
 # Fancy terminal plotting for Julia using Braille characters.
-function dotplot(f::Function, border=true, labels=true, title=true,
+function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
                  cols=60, rows=16, margin=9; args...)
     # Assumes f(x) is defined for all x in the given range.
     @assert length(args) == 1 "dotplot requires a function of exactly one var."
@@ -45,23 +45,27 @@ function dotplot(f::Function, border=true, labels=true, title=true,
     xstart, xspread = rng.start, xstop - rng.start
     xstep, xscale = xspread/cols, cols/xspread
 
-    vals = [f(x) for x in xstart:xstep:xstop]
+    vals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
     ystart, ystop = minimum(vals), maximum(vals)
     yspread = ystop - ystart
     ystep, yscale = yspread/rows, rows/yspread
-    scaled = yscale*(vals .- ystart)
 
-    # Interpolate between steps to smooth plot & avoid calling f(x) frequently.
-    for col in 1:length(scaled) - 1
-        yleftedge, yrightedge = scaled[col:col + 1]
-        ydelta = yrightedge - yleftedge
-        yleftcol, yrightcol = yleftedge + ydelta*0.25, yrightedge - ydelta*0.25
+    for (row, f) in enumerate(fs)
+        yvals = vals[row, :]
+        scaled = yscale*(yvals .- ystart)
 
-        leftdotrow, rightdotrow = int(floor(yleftcol)), int(floor(yrightcol))
-        dotleftcol = int(floor(3.99*(1.0 - yleftcol + leftdotrow))) + 1
-        dotrightcol = int(floor(3.99*(1.0 - yrightcol + rightdotrow))) + 1
-        grid[col, rows - leftdotrow] |= 1 << (0, 1, 2, 6)[dotleftcol]
-        grid[col, rows - rightdotrow] |= 1 << (3, 4, 5, 7)[dotrightcol]
+        # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
+        for col in 1:length(scaled) - 1
+            yleftedge, yrightedge = scaled[col:col + 1]
+            ydelta = yrightedge - yleftedge
+            yleftcol, yrightcol = yleftedge + ydelta*0.25, yrightedge - ydelta*0.25
+
+            leftdotrow, rightdotrow = int(floor(yleftcol)), int(floor(yrightcol))
+            dotleftcol = int(floor(3.99*(1.0 - yleftcol + leftdotrow))) + 1
+            dotrightcol = int(floor(3.99*(1.0 - yrightcol + rightdotrow))) + 1
+            grid[col, rows - leftdotrow] |= 1 << (0, 1, 2, 6)[dotleftcol]
+            grid[col, rows - rightdotrow] |= 1 << (3, 4, 5, 7)[dotrightcol]
+        end
     end
 
     lines = String[]
@@ -84,7 +88,12 @@ function dotplot(f::Function, border=true, labels=true, title=true,
         push!(lines, lblrow)
     end
 
-    label = funclabel(f, [string(arg[1]) for arg in args])
-    title && println("$padding $label")
+    if title
+        names = [funclabel(f, [string(arg[1]) for arg in args]) for f in fs]
+        nametag = join(names, ", ")
+        println("$padding $nametag")
+    end
     println(join(lines, '\n'))
 end
+
+dotplot(f::Function, etc...; args...) = dotplot([f], etc...; args...)

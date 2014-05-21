@@ -17,6 +17,7 @@ function.
 ![DotPlot.jl screenshot 1](doc/img/dotplot-screenshot-1.png)
 ![DotPlot.jl screenshot 2](doc/img/dotplot-screenshot-2.png)
 ![DotPlot.jl screenshot 3](doc/img/dotplot-screenshot-3.png)
+![DotPlot.jl screenshot 4](doc/img/dotplot-screenshot-4.png)
 
 Screenshots taken in iTerm2 on a Mac using the
 [Adobe Source Code Pro font](https://github.com/adobe/source-code-pro).
@@ -42,6 +43,11 @@ dotplot(x -> cos(x); x=-1:1)
 You can also pass functions by name:
 ```julia
 dotplot(sin; x=-5:5)
+```
+
+Plotting multiple functions is as easy as passing an array of functions:
+```julia
+dotplot([x -> cos(x), x -> cos(x + pi)]; x=0:5)
 ```
 
 DotPlot.jl will attempt to generate a smart label for the graph based on the
