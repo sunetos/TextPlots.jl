@@ -25,10 +25,22 @@ Pkg.add("DotPlot")
 
 ### USAGE
 
-DotPlot.jl is very simple to use: just pass a function and a range to dotplot().
-
+DotPlot.jl is very simple to use: just pass a function and a range to dotplot():
 ```julia
 using DotPlot
 
 dotplot(x -> cos(x); x=-1:1)
 ```
+
+You can also pass functions by name:
+```julia
+dotplot(sin; x=-5:5)
+```
+
+DotPlot.jl will attempt to generate a smart label for the graph based on the
+input function. If you supply a single-line function, the source of the function
+will be used as the label. If you supply a named function, the name of the
+function is used for the label.
+
+Plots are scaled from min(f(x)) to max(f(x)) automatically; you cannot supply a
+range for the vertical axix.
