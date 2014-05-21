@@ -1,6 +1,10 @@
 DotPlot.jl
 ==========
 
+[![Build Status](https://travis-ci.org/sunetos/DotPlot.jl.svg?branch=master)](https://travis-ci.org/sunetos/DotPlot.jl)
+[![Coverage Status](https://coveralls.io/repos/sunetos/DotPlot.jl/badge.png?branch=master)](https://coveralls.io/r/sunetos/DotPlot.jl?branch=master)
+
+
 Fancy terminal plotting for Julia using Braille characters.
 Inspired by [Drawille](https://github.com/asciimoo/drawille) but not based on it
 due to its restrictive license (AGPL). DotPlot.jl is free for all under the MIT
@@ -19,8 +23,11 @@ Screenshots taken in iTerm2 on a Mac using the
 
 ### INSTALLATION
 
+DotPlot.jl currently has no dependencies on other packages. It has only been
+tested against Julia v0.3 nightly builds on a Mac.
+
 ```julia
-Pkg.add("DotPlot")
+julia> Pkg.add("DotPlot")
 ```
 
 ### USAGE
@@ -43,4 +50,4 @@ will be used as the label. If you supply a named function, the name of the
 function is used for the label.
 
 Plots are scaled from min(f(x)) to max(f(x)) automatically; you cannot supply a
-range for the vertical axix.
+range for the vertical axis.
