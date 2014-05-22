@@ -1,3 +1,8 @@
+# Currently Julia gives false for isa([1,2,3], Vector{Real}), so doing manually.
+typealias RealVector Union(Vector{Int}, Vector{Float64})
+typealias RealMatrix Union(Matrix{Int}, Matrix{Float64})
+typealias PlotInputs Union(Vector{Function}, (RealVector, RealMatrix))
+
 # Julia somehow doesn't support the crucial "g" printf type.
 # Don't feel like dealing with complex numbers yet.
 function format(num::Real, width::Int)
@@ -7,7 +12,7 @@ function format(num::Real, width::Int)
 end
 
 # Attempt to produce a meaningful graph label automatically.
-function funclabel(f, names=["x"])
+function funclabel(f::Function, names=["x"])
     if isa(f.env, MethodTable) && isdefined(f.env, :name)
         return "$(f.env.name)($(join(names, ", ")))"
     end
@@ -30,47 +35,57 @@ function funclabel(f, names=["x"])
 end
 
 # Fancy terminal plotting for Julia using Braille characters.
-function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
-                 cols=60, rows=16, margin=9; args...)
-    # Assumes f(x) is defined for all x in the given range.
-    @assert length(args) == 1 "dotplot requires a function of exactly one var."
-
-    var, rng = args[1]
-    @assert isa(rng, Range) "dotplot requires a range for each var."
-    var = string(var)
-
-    xstop = isdefined(rng, :stop) ? rng.stop : rng.len
-    xstart, xspread = rng.start, xstop - rng.start
-    xstep, xscale = xspread/cols, cols/xspread
-
-    xvals = collect(xstart:xstep:xstop)
-    xscaled = xscale*(xvals .- xstart)
-
-    yvals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
-    ystart, ystop = minimum(yvals), maximum(yvals)
-    yspread = ystop - ystart
-    ystep, yscale = yspread/rows, rows/yspread
-
+function dotplot(data::PlotInputs, start::Real=-10, stop::Real=10;
+                 border::Bool=true, labels::Bool=true, title::Bool=true,
+                 cols::Int=60, rows::Int=16, margin::Int=9)
     grid = fill(char(0x2800), cols, rows)
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
+        #invy = rows - max(1, min(y, rows))
         invy = rows - y
         col, col2 = int(floor(x)), int(floor(x*2))
         row, row4 = int(floor(invy)), int(floor(invy*4))
         grid[col + 1, row + 1] |= 1 << sides[1 + (col2 & 1)][1 + (row4 & 3)]
     end
 
-    for (row, f) in enumerate(fs)
+    continuous = isa(data, Vector{Function})
+    if continuous
+        xframes, yframes = cols, rows
+        xspread = stop - start
+        xstep, xscale = (stop - start)/cols, xframes/xspread
+        xvals = collect(start:xstep:stop)
+        # Assumes f(x) is defined for all x in the given range.
+        yvals = Float64[f(x) for f in data, x in xvals]
+    else
+        xframes, yframes = cols - 1, rows - 1
+        xvals, yvals = data
+        start, stop = minimum(xvals), maximum(xvals)
+        xspread = stop - start
+        xstep, xscale = xspread/xframes, xframes/xspread
+        isa(yvals, RealVector) && (yvals = reshape(yvals, 1, length(yvals)))
+    end
+
+    xscaled = xscale*(xvals .- start)
+
+    ystart, ystop = minimum(yvals), maximum(yvals)
+    yspread = ystop - ystart
+    ystep, yscale = yspread/yframes, yframes/yspread
+
+    for row in size(yvals, 1)
         rowvals = yvals[row, :]
         yscaled = yscale*(rowvals .- ystart)
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
-        for (col, x) in enumerate(xscaled[1:end - 1])
-            yleftedge, yrightedge = yscaled[col:col + 1]
-            ydelta = yrightedge - yleftedge
-            yleftcol, yrightcol = yleftedge + ydelta*0.25, yrightedge - ydelta*0.25
-            showdot(x + eps(x), yleftcol)
-            showdot(x + 0.5 + eps(x), yrightcol)
+        for (col, x) in enumerate(xscaled[1:(continuous ? end - 1 : end)])
+            if continuous
+                yleftedge, yrightedge = yscaled[col:col + 1]
+                ydelta = yrightedge - yleftedge
+                showdot(x + eps(x), yleftedge + ydelta*0.25)
+                showdot(x + 0.5 + eps(x), yrightedge - ydelta*0.25)
+            else
+                y = yscaled[col]
+                showdot(x, y + 1)
+            end
         end
     end
 
@@ -87,19 +102,40 @@ function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
         lines[1] = "$ystoplabel $(lines[1][margin + 1:end])"
         lines[end] = "$ystartlabel $(lines[end][margin + 1:end])"
 
-        xstartlabel = strip(format(xstart, margin - 1))
-        xstoplabel = strip(format(xstop, margin - 1))
+        xstartlabel = strip(format(start, margin - 1))
+        xstoplabel = strip(format(stop, margin - 1))
         lblrow = repeat(" ", margin - 1) * lpad(xstartlabel, 2)
         lblrow *= lpad(xstoplabel, length(prefix) + cols - length(lblrow) + 1)
         push!(lines, lblrow)
     end
 
     if title
-        names = [funclabel(f, [string(arg[1]) for arg in args]) for f in fs]
-        nametag = join(names, ", ")
+        if isa(data, Vector{Function})
+            nametag = join([funclabel(f) for f in data], ", ")
+        else
+            nametag = "scatter plot"
+        end
         println("$padding $nametag")
     end
     println(join(lines, '\n'))
 end
 
-dotplot(f::Function, etc...; args...) = dotplot([f], etc...; args...)
+function dotplot(data::PlotInputs, rng::Range, etc...; args...)
+    stop = isdefined(rng, :stop) ? rng.stop : rng.len
+    dotplot(data, rng.start, stop, etc...; args...)
+end
+function dotplot(f::Function, etc...; args...)
+    dotplot([f], etc...; args...)
+end
+function dotplot(xvals::RealVector, yvals::RealVector, etc...; args...)
+    dotplot((xvals, reshape(yvals, 1, length(yvals))), etc...; args...)
+end
+function dotplot(data::RealVector, etc...; args...)
+    dotplot(collect(1:length(data)), data, etc...; args...)
+end
+function dotplot(data::RealMatrix, etc...; args...)
+    dotplot((collect(1:size(data, 2)), data), etc...; args...)
+end
+function dotplot(rng::Range, etc...; args...)
+    dotplot(collect(rng))
+end
