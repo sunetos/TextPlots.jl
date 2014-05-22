@@ -39,32 +39,38 @@ function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
     @assert isa(rng, Range) "dotplot requires a range for each var."
     var = string(var)
 
-    grid = fill(char(0x2800), cols, rows)
-
     xstop = isdefined(rng, :stop) ? rng.stop : rng.len
     xstart, xspread = rng.start, xstop - rng.start
     xstep, xscale = xspread/cols, cols/xspread
 
-    vals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
-    ystart, ystop = minimum(vals), maximum(vals)
+    xvals = collect(xstart:xstep:xstop)
+    xscaled = xscale*(xvals .- xstart)
+
+    fvals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
+    ystart, ystop = minimum(fvals), maximum(fvals)
     yspread = ystop - ystart
     ystep, yscale = yspread/rows, rows/yspread
 
+    grid = fill(char(0x2800), cols, rows)
+    left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
+    function showdot(x, y)  # Assumes x & y are already scaled to the grid.
+        invy = rows - y
+        col, col2 = int(floor(x)), int(floor(x*2))
+        row, row4 = int(floor(invy)), int(floor(invy*4))
+        grid[col + 1, row + 1] |= 1 << sides[1 + (col2 & 1)][1 + (row4 & 3)]
+    end
+
     for (row, f) in enumerate(fs)
-        yvals = vals[row, :]
-        scaled = yscale*(yvals .- ystart)
+        yvals = fvals[row, :]
+        yscaled = yscale*(yvals .- ystart)
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
-        for col in 1:length(scaled) - 1
-            yleftedge, yrightedge = scaled[col:col + 1]
+        for (col, x) in enumerate(xscaled[1:end - 1])
+            yleftedge, yrightedge = yscaled[col:col + 1]
             ydelta = yrightedge - yleftedge
             yleftcol, yrightcol = yleftedge + ydelta*0.25, yrightedge - ydelta*0.25
-
-            leftdotrow, rightdotrow = int(floor(yleftcol)), int(floor(yrightcol))
-            dotleftcol = int(floor(3.99*(1.0 - yleftcol + leftdotrow))) + 1
-            dotrightcol = int(floor(3.99*(1.0 - yrightcol + rightdotrow))) + 1
-            grid[col, rows - leftdotrow] |= 1 << (0, 1, 2, 6)[dotleftcol]
-            grid[col, rows - rightdotrow] |= 1 << (3, 4, 5, 7)[dotrightcol]
+            showdot(x + eps(x), yleftcol)
+            showdot(x + 0.5 + eps(x), yrightcol)
         end
     end
 
