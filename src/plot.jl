@@ -46,8 +46,8 @@ function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
     xvals = collect(xstart:xstep:xstop)
     xscaled = xscale*(xvals .- xstart)
 
-    fvals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
-    ystart, ystop = minimum(fvals), maximum(fvals)
+    yvals = Float64[f(x) for f in fs, x in xstart:xstep:xstop]
+    ystart, ystop = minimum(yvals), maximum(yvals)
     yspread = ystop - ystart
     ystep, yscale = yspread/rows, rows/yspread
 
@@ -61,8 +61,8 @@ function dotplot(fs::Vector{Function}, border=true, labels=true, title=true,
     end
 
     for (row, f) in enumerate(fs)
-        yvals = fvals[row, :]
-        yscaled = yscale*(yvals .- ystart)
+        rowvals = yvals[row, :]
+        yscaled = yscale*(rowvals .- ystart)
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
         for (col, x) in enumerate(xscaled[1:end - 1])
