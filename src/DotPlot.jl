@@ -1,4 +1,4 @@
-module DotPlot
+module TextPlot
     export plot
 
     include("plot.jl")
