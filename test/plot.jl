@@ -1,5 +1,6 @@
 # TODO: Make tests that vary the parameters and validate the output.
 
+plot(exp, 0, 30)
 plot(sinpi, -2, 2)
 plot(rand(15))
 plot(rand(15, 4))

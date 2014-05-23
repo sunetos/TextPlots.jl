@@ -8,7 +8,13 @@ typealias PlotInputs Union(Vector{Function}, (RealVector, RealMatrix))
 function format(num::Real, width::Int)
     isint = isinteger(num) || isinteger(round(num, width - 5))
     fmt = isint ? "%$(width)d" : "%$(width).$(width - 3)f"
-    eval(:(@sprintf $(fmt) $(num)))
+    str = eval(:(@sprintf $(fmt) $(num)))
+    if length(str) > width
+        str[end] == '.' && return " $(str[1:end - 1])"
+        1 < search(str, '.') <= width && return str[1:width]
+        width >= 4 && return str[1:width - 3] * "..."
+    end
+    str
 end
 
 # Attempt to produce a meaningful graph label automatically.
