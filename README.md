@@ -1,37 +1,37 @@
-TextPlot.jl
+TextPlots.jl
 ==========
 
-[![Build Status](https://travis-ci.org/sunetos/TextPlot.jl.svg?branch=master)](https://travis-ci.org/sunetos/TextPlot.jl)
-[![Coverage Status](https://coveralls.io/repos/sunetos/TextPlot.jl/badge.png)](https://coveralls.io/r/sunetos/TextPlot.jl)
+[![Build Status](https://travis-ci.org/sunetos/TextPlots.jl.svg?branch=master)](https://travis-ci.org/sunetos/TextPlots.jl)
+[![Coverage Status](https://coveralls.io/repos/sunetos/TextPlots.jl/badge.png)](https://coveralls.io/r/sunetos/TextPlots.jl)
 
 
 Fancy terminal plotting for Julia using Braille characters.
 Inspired by [Drawille](https://github.com/asciimoo/drawille) but not based on it
-due to its restrictive license (AGPL). TextPlot.jl is free for all under the MIT
+due to its restrictive license (AGPL). TextPlots.jl is free for all under the MIT
 license.
 
-TextPlot.jl aims for as much elegance and aesthetics as possible for a terminal
+TextPlots.jl aims for as much elegance and aesthetics as possible for a terminal
 (unicode) plotting library. It should be able to plot any continuous real-valued
 function, and any small-to-medium collection of points.
 
-![TextPlot.jl screenshot 1](doc/img/plot-screenshot-1.png)
+![TextPlots.jl screenshot 1](doc/img/plot-screenshot-1.png)
 
 Screenshots taken in iTerm2 on a Mac using the
 [Adobe Source Code Pro font](https://github.com/adobe/source-code-pro).
 
 ### INSTALLATION
 
-TextPlot.jl currently has no dependencies on other packages. It has only been
+TextPlots.jl currently has no dependencies on other packages. It has only been
 tested against Julia v0.3 nightly builds on a Mac.
 
 ```julia
-julia> Pkg.add("TextPlot")
-julia> using TextPlot
+julia> Pkg.add("TextPlots")
+julia> using TextPlots
 ```
 
 ### USAGE
 
-TextPlot.jl is very simple to use: just pass a function and a range to plot():
+TextPlots.jl is very simple to use: just pass a function and a range to plot():
 ```
 julia> plot(x -> cos(x), -1:1)
           cos(x)
@@ -261,7 +261,7 @@ julia> plot([1:2:20], rand(10, 3))
          1                                                           19
 ```
 
-TextPlot.jl will attempt to generate a smart label for the graph based on the
+TextPlots.jl will attempt to generate a smart label for the graph based on the
 input function. If you supply a single-line function, the source of the function
 will be used as the label. If you supply a named function, the name of the
 function is used for the label.
