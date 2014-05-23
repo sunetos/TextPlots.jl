@@ -41,7 +41,7 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
     grid = fill(char(0x2800), cols, rows)
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
-        invy = rows - y
+        invy = (rows - y)*0.9999
         col, col2 = int(floor(x)), int(floor(x*2))
         row, row4 = int(floor(invy)), int(floor(invy*4))
         grid[col + 1, row + 1] |= 1 << sides[1 + (col2 & 1)][1 + (row4 & 3)]
