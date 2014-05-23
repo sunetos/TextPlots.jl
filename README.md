@@ -12,7 +12,7 @@ license.
 
 TextPlot.jl aims for as much elegance and aesthetics as possible for a terminal
 (unicode) plotting library. It should be able to plot any continuous real-valued
-function.
+function, and any small-to-medium collection of points.
 
 ![TextPlot.jl screenshot 1](doc/img/plot-screenshot-1.png)
 ![TextPlot.jl screenshot 2](doc/img/plot-screenshot-2.png)
