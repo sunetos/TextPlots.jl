@@ -2,7 +2,7 @@ TextPlot.jl
 ==========
 
 [![Build Status](https://travis-ci.org/sunetos/TextPlot.jl.svg?branch=master)](https://travis-ci.org/sunetos/TextPlot.jl)
-[![Coverage Status](https://coveralls.io/repos/sunetos/TextPlot.jl/badge.png?branch=master)](https://coveralls.io/r/sunetos/TextPlot.jl?branch=master)
+[![Coverage Status](https://coveralls.io/repos/sunetos/TextPlot.jl/badge.png)](https://coveralls.io/r/sunetos/TextPlot.jl)
 
 
 Fancy terminal plotting for Julia using Braille characters.
