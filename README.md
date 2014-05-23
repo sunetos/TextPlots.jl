@@ -355,7 +355,7 @@ julia> plot(cos, margin=16, cols=80, rows=30)
 
 Floating point numbers are automatically rounded to the appropriate precision to
 fit in the specified left margin:
-```
+```shell
 julia> plot(cos, margin=4, cols=12, rows=6)
      cos(x)
   1 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
