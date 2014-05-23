@@ -1,5 +1,5 @@
 push!(LOAD_PATH, "src")
 
-using DotPlot
+using TextPlot
 
 include("plot.jl")
