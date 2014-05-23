@@ -32,7 +32,7 @@ julia> using TextPlot
 ### USAGE
 
 TextPlot.jl is very simple to use: just pass a function and a range to plot():
-```julia
+```
 julia> plot(x -> cos(x), -1:1)
           cos(x)
        1 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -57,7 +57,7 @@ julia> plot(x -> cos(x), -1:1)
 ```
 
 You can also pass functions by name:
-```julia
+```
 julia> plot(sin, -5:5)
           sin(x)
  0.99895 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -82,7 +82,7 @@ julia> plot(sin, -5:5)
 ```
 
 Plotting multiple functions is as easy as passing an array of functions:
-```julia
+```
 julia> plot([x -> cos(x), x -> cos(x + pi)], 0:5)
           cos(x), cos(x + pi)
        1 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -109,7 +109,7 @@ julia> plot([x -> cos(x), x -> cos(x + pi)], 0:5)
 For [Gadfly](https://github.com/dcjones/Gadfly.jl) compatibility, you can also
 pass "start" and "stop" as separate integers instead of supplying a range
 object:
-```julia
+```
 julia> plot(x -> x^3 - 2x^2 + 3x, -5, 5)
           (x^3 - 2 * x^2) + 3x
       90 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -135,7 +135,7 @@ julia> plot(x -> x^3 - 2x^2 + 3x, -5, 5)
 
 Like [Maple](http://www.maplesoft.com/products/maple/), if you do not supply a
 range at all, the values -10 to 10 are assumed:
-```julia
+```
 julia> plot(cos)
           cos(x)
        1 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -161,7 +161,7 @@ julia> plot(cos)
 
 You can also plot arbitrary points (scatter plot) a variety of ways. You can
 supply just a vector of y coordinates:
-```julia
+```
 julia> plot(rand(15))
           scatter plot
  0.90690 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -186,7 +186,7 @@ julia> plot(rand(15))
 ```
 
 Or a 2d array (matrix) of y coordinates:
-```julia
+```
 julia> plot(rand(15, 4))
           scatter plot
  0.99527 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -211,7 +211,7 @@ julia> plot(rand(15, 4))
 ```
 
 Or a pair of vectors, the first being the x coords and the second the y coord:
-```julia
+```
 julia> plot([1, 3, 5, 7], [13, 11, 9, 7])
           scatter plot
       13 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -237,7 +237,7 @@ julia> plot([1, 3, 5, 7], [13, 11, 9, 7])
 
 You can even supply a vector of x coords and a matrix of y coords, where each
 row in the matrix is a list of y coords (one for each x coord):
-```julia
+```
 julia> plot([1:2:20], rand(10, 3))
           scatter plot
  0.99678 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
@@ -271,7 +271,7 @@ range for the vertical axis.
 
 Most graph features are configurable as keyword arguments; you can toggle the
 border, title, and axis labels:
-```julia
+```
 julia> plot(x -> cos(x), border=false)
           cos(x)
        1 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠊⠉⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠊⠑⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠉⠑⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -312,7 +312,7 @@ julia> plot(x -> cos(x), border=false, title=false, labels=false)
 ```
 
 Additionally, all of the size options are configurable (cols, rows, margin):
-```julia
+```
 julia> plot(cos, margin=16, cols=80, rows=30)
                  cos(x)
               1
@@ -355,7 +355,7 @@ julia> plot(cos, margin=16, cols=80, rows=30)
 
 Floating point numbers are automatically rounded to the appropriate precision to
 fit in the specified left margin:
-```julia
+```
 julia> plot(cos, margin=4, cols=12, rows=6)
      cos(x)
   1 ⡤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⠤⢤
