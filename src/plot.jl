@@ -58,6 +58,7 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
     else
         xframes, yframes = cols - 1, rows - 1
         xvals, yvals = data
+        @assert length(yvals) >= length(xvals) "Different number of x/y points."
         start, stop = minimum(xvals), maximum(xvals)
         xspread = stop - start
         xstep, xscale = xspread/xframes, xframes/xspread
@@ -124,6 +125,9 @@ function plot(data::PlotInputs, rng::Range, etc...; args...)
 end
 function plot(f::Function, etc...; args...)
     plot([f], etc...; args...)
+end
+function plot(xvals::RealVector, yvals::RealMatrix, etc...; args...)
+    plot((xvals, yvals), etc...; args...)
 end
 function plot(xvals::RealVector, yvals::RealVector, etc...; args...)
     plot((xvals, reshape(yvals, length(yvals), 1)), etc...; args...)
