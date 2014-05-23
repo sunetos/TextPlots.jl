@@ -1,5 +1,5 @@
 module DotPlot
-    export dotplot
+    export plot
 
     include("plot.jl")
 end

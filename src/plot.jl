@@ -35,7 +35,7 @@ function funclabel(f::Function, names=["x"])
 end
 
 # Fancy terminal plotting for Julia using Braille characters.
-function dotplot(data::PlotInputs, start::Real=-10, stop::Real=10;
+function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
                  border::Bool=true, labels::Bool=true, title::Bool=true,
                  cols::Int=60, rows::Int=16, margin::Int=9)
     grid = fill(char(0x2800), cols, rows)
@@ -118,22 +118,22 @@ function dotplot(data::PlotInputs, start::Real=-10, stop::Real=10;
     println(join(lines, '\n'))
 end
 
-function dotplot(data::PlotInputs, rng::Range, etc...; args...)
+function plot(data::PlotInputs, rng::Range, etc...; args...)
     stop = isdefined(rng, :stop) ? rng.stop : rng.len
-    dotplot(data, rng.start, stop, etc...; args...)
+    plot(data, rng.start, stop, etc...; args...)
 end
-function dotplot(f::Function, etc...; args...)
-    dotplot([f], etc...; args...)
+function plot(f::Function, etc...; args...)
+    plot([f], etc...; args...)
 end
-function dotplot(xvals::RealVector, yvals::RealVector, etc...; args...)
-    dotplot((xvals, reshape(yvals, length(yvals), 1)), etc...; args...)
+function plot(xvals::RealVector, yvals::RealVector, etc...; args...)
+    plot((xvals, reshape(yvals, length(yvals), 1)), etc...; args...)
 end
-function dotplot(data::RealVector, etc...; args...)
-    dotplot(collect(1:length(data)), data, etc...; args...)
+function plot(data::RealVector, etc...; args...)
+    plot(collect(1:length(data)), data, etc...; args...)
 end
-function dotplot(data::RealMatrix, etc...; args...)
-    dotplot((collect(1:size(data, 1)), data), etc...; args...)
+function plot(data::RealMatrix, etc...; args...)
+    plot((collect(1:size(data, 1)), data), etc...; args...)
 end
-function dotplot(rng::Range, etc...; args...)
-    dotplot(collect(rng))
+function plot(rng::Range, etc...; args...)
+    plot(collect(rng))
 end
