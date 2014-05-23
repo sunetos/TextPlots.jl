@@ -31,7 +31,7 @@ julia> Pkg.add("TextPlot")
 ### USAGE
 
 TextPlot.jl is very simple to use: just pass a function and a range to plot():
-```julia
+```
 using TextPlot
 
 julia> plot(x -> cos(x), -1:1)
