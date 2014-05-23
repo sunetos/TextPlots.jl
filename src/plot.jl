@@ -41,7 +41,6 @@ function dotplot(data::PlotInputs, start::Real=-10, stop::Real=10;
     grid = fill(char(0x2800), cols, rows)
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
-        #invy = rows - max(1, min(y, rows))
         invy = rows - y
         col, col2 = int(floor(x)), int(floor(x*2))
         row, row4 = int(floor(invy)), int(floor(invy*4))
@@ -55,24 +54,23 @@ function dotplot(data::PlotInputs, start::Real=-10, stop::Real=10;
         xstep, xscale = (stop - start)/cols, xframes/xspread
         xvals = collect(start:xstep:stop)
         # Assumes f(x) is defined for all x in the given range.
-        yvals = Float64[f(x) for f in data, x in xvals]
+        yvals = Float64[f(x) for x in xvals, f in data]
     else
         xframes, yframes = cols - 1, rows - 1
         xvals, yvals = data
         start, stop = minimum(xvals), maximum(xvals)
         xspread = stop - start
         xstep, xscale = xspread/xframes, xframes/xspread
-        isa(yvals, RealVector) && (yvals = reshape(yvals, 1, length(yvals)))
+        isa(yvals, RealVector) && (yvals = reshape(yvals, length(yvals), 1))
     end
 
     xscaled = xscale*(xvals .- start)
-
     ystart, ystop = minimum(yvals), maximum(yvals)
     yspread = ystop - ystart
     ystep, yscale = yspread/yframes, yframes/yspread
 
-    for row in size(yvals, 1)
-        rowvals = yvals[row, :]
+    for row in 1:size(yvals, 2)
+        rowvals = yvals[:, row]
         yscaled = yscale*(rowvals .- ystart)
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
@@ -128,13 +126,13 @@ function dotplot(f::Function, etc...; args...)
     dotplot([f], etc...; args...)
 end
 function dotplot(xvals::RealVector, yvals::RealVector, etc...; args...)
-    dotplot((xvals, reshape(yvals, 1, length(yvals))), etc...; args...)
+    dotplot((xvals, reshape(yvals, length(yvals), 1)), etc...; args...)
 end
 function dotplot(data::RealVector, etc...; args...)
     dotplot(collect(1:length(data)), data, etc...; args...)
 end
 function dotplot(data::RealMatrix, etc...; args...)
-    dotplot((collect(1:size(data, 2)), data), etc...; args...)
+    dotplot((collect(1:size(data, 1)), data), etc...; args...)
 end
 function dotplot(rng::Range, etc...; args...)
     dotplot(collect(rng))
