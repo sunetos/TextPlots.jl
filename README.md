@@ -14,6 +14,11 @@ TextPlot.jl aims for as much elegance and aesthetics as possible for a terminal
 (unicode) plotting library. It should be able to plot any continuous real-valued
 function, and any small-to-medium collection of points.
 
+![TextPlot.jl screenshot 1](doc/img/plot-screenshot-1.png)
+
+Screenshots taken in iTerm2 on a Mac using the
+[Adobe Source Code Pro font](https://github.com/adobe/source-code-pro).
+
 ### INSTALLATION
 
 TextPlot.jl currently has no dependencies on other packages. It has only been
