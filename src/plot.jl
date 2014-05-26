@@ -44,8 +44,10 @@ end
 function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
                  border::Bool=true, labels::Bool=true, title::Bool=true,
                  cols::Int=60, rows::Int=16, margin::Int=9,
+                 invert::Bool=false, gridlines::Bool=false,
                  scalefunc::Function=identity)
-    grid = fill(char(0x2800), cols, rows)
+
+    grid = fill(char(gridlines ? 0x2812 : 0x2800), cols, rows)
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
         invy = (rows - y)*0.9999
@@ -101,6 +103,8 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
             end
         end
     end
+
+    invert && (grid = map(c -> char(c $ 0xFF), grid))
 
     lines = String[]
     padding = labels ? repeat(" ", margin) : ""

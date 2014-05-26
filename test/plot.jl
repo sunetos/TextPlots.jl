@@ -1,5 +1,6 @@
 # TODO: Make tests that vary the parameters and validate the output.
 
+
 plot(exp, 0, 30)
 plot(sinpi, -2, 2)
 plot(rand(15))
@@ -22,3 +23,8 @@ plot(exp, 0.1:20)
 logplot(exp, 0.1:20)
 plot(x -> exp(-x/5), 0.01:20)
 logplot(x -> exp(-x/5), 0.01:20)
+
+plot(sinpi, -2, 2, invert=false, gridlines=false)
+plot(sinpi, -2, 2, invert=true, gridlines=false)
+plot(sinpi, -2, 2, invert=false, gridlines=true)
+plot(sinpi, -2, 2, invert=true, gridlines=true)
