@@ -81,13 +81,11 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
         rowvals = yvals[:, row]
         yscaled = yscale*(rowvals .- ystart)
         if scalefunc != identity
-            yrescaled = [scalefunc(y) for y in yscaled]
-            for (i,y) in enumerate(yrescaled) if isinf(y) yrescaled[i] = 0 end end
+            yrescaled = [scalefunc(y) for y in rowvals]
             yrestart, yrestop = minimum(yrescaled), maximum(yrescaled)
             yrespread = yrestop - yrestart
-            yrescale = yframes/yrespread
-            yscaled = yrescale*yrescaled
-            if yrestart < 0 yscaled .+= abs(yrestart)*yrescale end
+            yrescale = rows/yrespread
+            yscaled = yrescale*(yrescaled .- yrestart)
         end
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
