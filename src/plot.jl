@@ -43,7 +43,8 @@ end
 # Fancy terminal plotting for Julia using Braille characters.
 function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
                  border::Bool=true, labels::Bool=true, title::Bool=true,
-                 cols::Int=60, rows::Int=16, margin::Int=9)
+                 cols::Int=60, rows::Int=16, margin::Int=9,
+                 scalefunc::Function=identity)
     grid = fill(char(0x2800), cols, rows)
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
@@ -79,6 +80,15 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
     for row in 1:size(yvals, 2)
         rowvals = yvals[:, row]
         yscaled = yscale*(rowvals .- ystart)
+        if scalefunc != identity
+            yrescaled = [scalefunc(y) for y in yscaled]
+            for (i,y) in enumerate(yrescaled) if isinf(y) yrescaled[i] = 0 end end
+            yrestart, yrestop = minimum(yrescaled), maximum(yrescaled)
+            yrespread = yrestop - yrestart
+            yrescale = yframes/yrespread
+            yscaled = yrescale*yrescaled
+            if yrestart < 0 yscaled .+= abs(yrestart)*yrescale end
+        end
 
         # Interpolate between steps to smooth plot & avoid frequent f(x) calls.
         for (col, x) in enumerate(xscaled[1:(continuous ? end - 1 : end)])
@@ -146,4 +156,7 @@ function plot(data::RealMatrix, etc...; args...)
 end
 function plot(rng::Range, etc...; args...)
     plot(collect(rng))
+end
+function logplot(etc...; args...)
+    plot(etc...; scalefunc=log10, args...)
 end

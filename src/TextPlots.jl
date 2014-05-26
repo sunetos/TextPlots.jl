@@ -1,5 +1,5 @@
 module TextPlots
-    export plot
+    export plot, logplot
 
     include("plot.jl")
 end

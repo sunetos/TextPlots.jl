@@ -17,3 +17,8 @@ plot([1, 3, 5])
 plot(1:10)
 plot([1, 3, 5, 7], [13, 11, 9, 7])
 plot([1:2:20], rand(10, 3))
+
+plot(exp, 0.1:20)
+logplot(exp, 0.1:20)
+plot(x -> exp(-x/5), 0.01:20)
+logplot(x -> exp(-x/5), 0.01:20)
