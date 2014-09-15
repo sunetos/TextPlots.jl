@@ -1,6 +1,5 @@
 # TODO: Make tests that vary the parameters and validate the output.
 
-
 plot(exp, 0, 30)
 plot(sinpi, -2, 2)
 plot(rand(15))
@@ -28,3 +27,6 @@ plot(sinpi, -2, 2, invert=false, gridlines=false)
 plot(sinpi, -2, 2, invert=true, gridlines=false)
 plot(sinpi, -2, 2, invert=false, gridlines=true)
 plot(sinpi, -2, 2, invert=true, gridlines=true)
+
+# Test rounding and symoblic label display.
+plot(sin, -6pi, 6pi, cols=140)

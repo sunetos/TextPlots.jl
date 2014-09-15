@@ -3,12 +3,44 @@ typealias RealVector Union(Vector{Int}, Vector{Float64})
 typealias RealMatrix Union(Matrix{Int}, Matrix{Float64})
 typealias PlotInputs Union(Vector{Function}, (RealVector, RealMatrix))
 
+SUPER = utf16("\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079")
+
+# Find magnitude of difference between 2 nums, as digits before/after decimal.
+function magnitude(num1::Real, num2::Real)
+    -iround(log10(abs(num2 - num1)))
+end
+
+# See if this float happens to match common uses of constants like n*pi.
+function findsymbolic(num::Real)
+    num == 0 && return false
+
+    dash(x, super=false) = x >= 0 ? "" : super ? "⁻" : "-"
+    sup(x) = dash(x, true) * join([SUPER[d + 1] for d in digits(iround(abs(x)))])
+    multiple(x) = iround(x) == 0 ? "0" : iround(x) == 1 ? "" : "$(iround(x))"
+    topower(n, x) = iround(x) == 0 ? "1" : iround(x) == 1 ? n : "$n$(sup(x))"
+
+    anum, sgn = abs(num), dash(num)
+
+    isinteger(num/π)        && return "$(multiple(num/π))π"
+    isinteger(num/e)        && return "$(multiple(num/e))e"
+    isinteger(log(anum))    && return "$(sgn)$(topower("e", log(anum)))"
+    isinteger(log10(anum))  && return "$(sgn)$(topower("10", log(anum)))"
+    return false
+end
+
 # Julia somehow doesn't support the crucial "g" printf type.
 # Don't feel like dealing with complex numbers yet.
-function format(num::Real, width::Int)
-    isint = isinteger(num) || isinteger(round(num, width - 5))
-    fmt = isint ? "%$(width)d" : "%$(width).$(width - 3)f"
-    str = eval(:(@sprintf $(fmt) $(num)))
+function format(num::Real, width::Int, precision::Int=typemax(Int))
+    str = findsymbolic(num)
+    if is(str, false)
+        precision < width && (num = round(num, precision + 1))
+        isint = isinteger(num) || isinteger(round(num, width - 5))
+        fmt = isint ? "%$(width)d" : "%$(width).$(width - 3)f"
+        str = eval(:(@sprintf $(fmt) $(num)))
+    else
+        str = lpad(str, width)
+    end
+
     if length(str) > width
         str[end] == '.' && return " $(str[1:end - 1])"
         1 < search(str, '.') <= width && return str[1:width]
@@ -51,8 +83,8 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
     left, right = sides = ((0, 1, 2, 6), (3, 4, 5, 7))
     function showdot(x, y)  # Assumes x & y are already scaled to the grid.
         invy = (rows - y)*0.9999
-        col, col2 = int(floor(x)), int(floor(x*2))
-        row, row4 = int(floor(invy)), int(floor(invy*4))
+        col, col2 = ifloor(x), ifloor(x*2)
+        row, row4 = ifloor(invy), ifloor(invy*4)
         grid[col + 1, row + 1] |= 1 << sides[1 + (col2 & 1)][1 + (row4 & 3)]
     end
 
@@ -114,14 +146,17 @@ function plot(data::PlotInputs, start::Real=-10, stop::Real=10;
     border && push!(lines, padding * "⠓" * repeat("⠒", cols) * "⠚")
 
     if labels
-        ystartlabel = format(ystart, margin - 1)
-        ystoplabel = format(ystop, margin - 1)
+        yprecision = magnitude(ystart, ystop)
+        ystartlabel = format(ystart, margin - 1, yprecision)
+        ystoplabel = format(ystop, margin - 1, yprecision)
         lines[1] = "$ystoplabel $(lines[1][margin + 1:end])"
         lines[end] = "$ystartlabel $(lines[end][margin + 1:end])"
 
-        xstartlabel = strip(format(start, margin - 1))
-        xstoplabel = strip(format(stop, margin - 1))
-        lblrow = repeat(" ", margin - 1) * lpad(xstartlabel, 2)
+        xprecision = magnitude(start, stop)
+        xstartlabel = strip(format(start, margin - 1, xprecision))
+        xstoplabel = strip(format(stop, margin - 1, xprecision))
+        xstartlabel[1] != '-' && (xstartlabel = " $xstartlabel")
+        lblrow = repeat(" ", margin - 1) * xstartlabel
         lblrow *= lpad(xstoplabel, length(prefix) + cols - length(lblrow) + 1)
         push!(lines, lblrow)
     end
