@@ -14,17 +14,24 @@ end
 function findsymbolic(num::Real)
     num == 0 && return false
 
+    # Get a regular or superscript minus sign if the given number is negative
     dash(x, super=false) = x >= 0 ? "" : super ? "⁻" : "-"
-    sup(x) = dash(x, true) * join([SUPER[d + 1] for d in digits(iround(abs(x)))])
+    # Create a superscript version of a number, rounded to an integer
+    sup(x) = dash(x, true) * join([SUPER[d + 1] for d in reverse(digits(iround(abs(x))))])
+    # Get a multiple in a convenient format for printing
+    # (0 instead of 0π, π instead of 1π, and n*π otherwise)
     multiple(x) = iround(x) == 0 ? "0" : iround(x) == 1 ? "" : "$(iround(x))"
+    # Format a number in exponent notation, n^x, handling special cases
+    # (1 instead of n⁰, n instead of n¹, and n^x otherwise)
     topower(n, x) = iround(x) == 0 ? "1" : iround(x) == 1 ? n : "$n$(sup(x))"
 
+    # Split number between the absolute value and the minus sign, if any
     anum, sgn = abs(num), dash(num)
 
     isinteger(num/π)        && return "$(multiple(num/π))π"
     isinteger(num/e)        && return "$(multiple(num/e))e"
     isinteger(log(anum))    && return "$(sgn)$(topower("e", log(anum)))"
-    isinteger(log10(anum))  && return "$(sgn)$(topower("10", log(anum)))"
+    isinteger(log10(anum))  && return "$(sgn)$(topower("10", log10(anum)))"
     return false
 end
 
