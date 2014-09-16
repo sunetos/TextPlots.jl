@@ -14,7 +14,7 @@ end
 function findsymbolic(num::Real)
     num == 0 && return false
 
-    # Get a regular or supersript minus sign if the given number is negative
+    # Get a regular or superscript minus sign if the given number is negative
     dash(x, super=false) = x >= 0 ? "" : super ? "⁻" : "-"
     # Create a superscript version of a number, rounded to an integer
     sup(x) = dash(x, true) * join([SUPER[d + 1] for d in reverse(digits(iround(abs(x))))])
